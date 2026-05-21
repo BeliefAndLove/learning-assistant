@@ -1,0 +1,10 @@
+{
+  "hosted": true,
+  "defaultModelId": "[L]gemini-3-flash-preview",
+  "models": [
+    {
+      "id": "[L]gemini-3-flash-preview",
+      "name": "Gemini 3 Flash"
+    }
+  ]
+}

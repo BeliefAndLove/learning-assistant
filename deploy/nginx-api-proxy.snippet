@@ -1,0 +1,21 @@
+# 将本文件内容合并进 /etc/nginx/sites-available/learning-assistant 的 server { } 内
+# 1) 先把 YOUR_API_KEY_HERE 换成真实 Key
+# 2) 在 server 里、location /assets/ 之前加入下面两段
+
+    # 公开模型配置（勿放 Key）
+    location = /config.json {
+        alias /etc/learning-assistant/config.json;
+        default_type application/json;
+        add_header Cache-Control "no-store";
+    }
+
+    # LLM 反代：浏览器只访问本站 /v1，由 Nginx 带上 Authorization
+    location /v1/ {
+        proxy_pass https://new.lemonapi.site/v1/;
+        proxy_ssl_server_name on;
+        proxy_set_header Host new.lemonapi.site;
+        proxy_set_header Authorization "Bearer YOUR_API_KEY_HERE";
+        proxy_buffering off;
+        proxy_read_timeout 300s;
+        proxy_connect_timeout 60s;
+    }
