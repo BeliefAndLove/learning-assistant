@@ -2,12 +2,7 @@ import type { AncestorFrameSnapshot, ChatMessage, StackItem } from "../types";
 import type { ContextConfig } from "./settings";
 import type { LLMMessage } from "./llm";
 
-const SYSTEM_PROMPT =
-  "你是 Recursive Learner 的讲解者，帮助用户用「调用栈」的方式递归式学习。" +
-  "用户主线在学习一个主题，遇到不懂的句子会划选后进入子帧追问。" +
-  "回答时：(1) 直接命中问题核心；(2) 必要时分点；" +
-  "(3) 鼓励用户在你的回答里再次划选不懂的词继续下钻。" +
-  "请用简体中文 Markdown 输出。";
+const SYSTEM_PROMPT = "请开启网络搜索";
 
 /** 字符级裁断到 maxChars，超出部分用省略号 */
 function truncate(s: string, maxChars: number): string {
@@ -133,7 +128,10 @@ export function buildLLMMessages(params: {
   // 当前帧的滑动窗口
   const window = messages.slice(-config.windowN);
   for (const m of window) {
-    out.push({ role: m.role, content: m.content });
+    out.push({
+      role: m.role,
+      content: m.content,
+    });
   }
   return out;
 }

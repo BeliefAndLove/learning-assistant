@@ -38,3 +38,24 @@ export type StackItem = {
   /** 本帧的对话历史 */
   messages: ChatMessage[];
 };
+
+export type BranchOrigin = {
+  /** 从哪个帧里划选出来的 */
+  frameId: string;
+  /** 后续可用于把枝叶锚回某条消息 */
+  messageIndex?: number;
+  /** 创建分支时的原始选区 */
+  sourceText: string;
+};
+
+export type LearningNode = StackItem & {
+  parentId: string | null;
+  children: string[];
+  createdFrom?: BranchOrigin;
+};
+
+export type LearningGraph = {
+  rootId: string;
+  nodesById: Record<string, LearningNode>;
+  activeNodeId: string;
+};

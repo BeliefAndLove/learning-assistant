@@ -17,27 +17,45 @@ html {
 }
 
 body {
-  /* paper white 底色 + 顶部双光晕，比纯白更有质感 */
-  background-color: #fbfaf7;
+  /* 科技蓝 → 紫罗兰 → 玫瑰粉 的多层光晕渐变
+   * 阅读卡片用半透明纸白覆盖，背景色从下方"渗"出来，过渡柔和不割裂 */
+  background-color: #1a1d3a;
   background-image:
     radial-gradient(
-      ellipse 80% 50% at 15% -10%,
-      rgba(91, 98, 224, 0.08),
+      ellipse 65% 50% at 8% 6%,
+      rgba(99, 102, 241, 0.55),
       transparent 60%
     ),
     radial-gradient(
-      ellipse 70% 50% at 85% -15%,
-      rgba(16, 185, 129, 0.05),
+      ellipse 55% 45% at 92% 4%,
+      rgba(236, 72, 153, 0.34),
       transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 55% at 85% 96%,
+      rgba(168, 85, 247, 0.32),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 4% 92%,
+      rgba(56, 189, 248, 0.3),
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      #1a1d3a 0%,
+      #2b1f44 40%,
+      #3a2240 70%,
+      #1f1f42 100%
     );
   background-attachment: fixed;
-  color: #1f1f1c;
+  color: #f1f1f8;
   font-family:
     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
 
-/* 滚动条柔化（webkit） */
+/* 滚动条柔化（webkit），亮主题面板内使用 */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -46,18 +64,18 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 23, 42, 0.12);
+  background: rgba(15, 23, 42, 0.18);
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(15, 23, 42, 0.22);
+  background: rgba(15, 23, 42, 0.34);
   background-clip: padding-box;
   border: 2px solid transparent;
 }
 
-/* Markdown 排版 —— 简约文章质感 */
+/* Markdown 排版 —— 浅色阅读区上的纸感正文 */
 .prose-article {
   color: #1f1f1c;
 }
@@ -114,14 +132,44 @@ body {
   @apply text-accent-600 underline underline-offset-2 decoration-accent-200 hover:decoration-accent-400;
 }
 
-/* 选区：在 paper 底上更柔和 */
-::selection {
-  background: rgba(91, 98, 224, 0.22);
+/* 星图跳转后消息脉冲高亮：一闪即逝 */
+@keyframes msg-pulse-anim {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(99, 102, 241, 0.55),
+      0 0 0 0 rgba(236, 72, 153, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px rgba(99, 102, 241, 0.18),
+      0 0 32px 6px rgba(236, 72, 153, 0.4);
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(99, 102, 241, 0),
+      0 0 0 0 rgba(236, 72, 153, 0);
+  }
+}
+.msg-pulse {
+  animation: msg-pulse-anim 1.6s ease-out;
 }
 
-/* 文章区的强调选区 —— 比 default selection 更明显 */
+/* KaTeX 行内/块级公式：与正文对齐，避免 $Q$ 原样露出 */
+.prose-article .katex {
+  font-size: 1.05em;
+}
+.prose-article .katex-display {
+  @apply my-4 overflow-x-auto;
+}
+
+/* 选区：在纸白底上更柔和 */
+::selection {
+  background: rgba(99, 102, 241, 0.26);
+}
+
+/* 文章区的强调选区 —— 比 default 更明显 */
 .prose-article ::selection {
-  background: rgba(91, 98, 224, 0.28);
+  background: rgba(99, 102, 241, 0.32);
 }
 
 /* 输入控件去掉系统默认 focus outline，统一交给 ring */
@@ -129,4 +177,54 @@ input,
 textarea,
 button {
   outline: none;
+}
+
+/* 持久高亮锚点：保留选区原文背景，hover 时发光 */
+.persist-mark {
+  position: absolute;
+  border-radius: 3px;
+  background: rgba(99, 102, 241, 0.18);
+  box-shadow: inset 0 -1px 0 0 rgba(99, 102, 241, 0.45);
+  mix-blend-mode: multiply;
+  transition:
+    background 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+}
+.persist-mark.is-hot {
+  background: rgba(236, 72, 153, 0.32);
+  box-shadow:
+    inset 0 -2px 0 0 rgba(236, 72, 153, 0.7),
+    0 0 20px rgba(236, 72, 153, 0.35);
+}
+
+/* 持久高亮锚点 badge：可点击，跳转到对应分支 */
+.persist-anchor {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  color: white;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  box-shadow:
+    0 2px 8px rgba(99, 102, 241, 0.35),
+    0 0 0 2px rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+  z-index: 6;
+}
+.persist-anchor:hover,
+.persist-anchor.is-hot {
+  transform: scale(1.18);
+  box-shadow:
+    0 4px 14px rgba(236, 72, 153, 0.55),
+    0 0 0 2px rgba(255, 255, 255, 0.95);
 }

@@ -58,12 +58,21 @@ export default {
         soft:
           "0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.05)",
         // 焦点环（替代 default ring）
-        focus: "0 0 0 3px rgba(91, 98, 224, 0.18)",
+        focus: "0 0 0 3px rgba(99, 102, 241, 0.22)",
+        // 玻璃卡片悬浮投影：在深色渐变背景上更深邃
+        glass:
+          "0 1px 0 0 rgba(255, 255, 255, 0.6) inset, 0 24px 60px -20px rgba(15, 23, 42, 0.55), 0 8px 24px -8px rgba(99, 102, 241, 0.25)",
+        // 悬浮浮窗（floating panel）阴影
+        float:
+          "0 20px 60px -16px rgba(15, 23, 42, 0.6), 0 8px 28px -12px rgba(236, 72, 153, 0.28)",
       },
       backgroundImage: {
         // 顶部双光晕：左 indigo，右 emerald，都极淡
         "page-aura":
           "radial-gradient(ellipse 80% 50% at 15% -10%, rgba(91, 98, 224, 0.08), transparent 60%), radial-gradient(ellipse 70% 50% at 85% -15%, rgba(16, 185, 129, 0.05), transparent 60%)",
+        // 卡片内顶部高光，制造"玻璃边缘"反光
+        "glass-sheen":
+          "linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 38%)",
       },
       keyframes: {
         "fade-in": {
